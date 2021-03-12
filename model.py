@@ -8,7 +8,7 @@ from tqdm import tqdm
 from loss import GradRegLoss
 
 class Net(nn.Module):
-    def __init__(self, BATCH_SIZE):
+    def __init__(self, reg_param=0):
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.bn1 = nn.BatchNorm2d(6)
@@ -22,10 +22,11 @@ class Net(nn.Module):
         self.device = torch.device("cuda:2" if torch.cuda.is_available() else "cpu")
         self.to(self.device)
 
-        self.loss_fn = GradRegLoss()
+        print('re_param:', reg_param)
+        
+        self.loss_fn = GradRegLoss(reg_param)
         self.optimizer = optim.Adam(self.parameters(), lr=0.001, weight_decay=5e-04)
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer)
-        self.bs = BATCH_SIZE
 
     def forward(self, x):
         x = self.pool(F.relu(self.bn1(self.conv1(x))))
@@ -38,7 +39,7 @@ class Net(nn.Module):
     def save(self, folder='./checkpoints/', name='model'):
         torch.save(self.state_dict(), os.path.join(folder, f'{name}.pth'))
         
-    def load(self, path):
+    def load(self, path='./checkpoints/model.pth'):
         if os.path.exists(path):
             self.load_state_dict(torch.load(path))
         else:

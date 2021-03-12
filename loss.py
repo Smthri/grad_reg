@@ -6,8 +6,8 @@ class GradRegLoss():
         self.base_loss = nn.CrossEntropyLoss()
         self.hp = hyperparam
 
-    def __call__(self, output, target, inputs, train=True):
-        if train:
+    def __call__(self, output, target, inputs, regularize_grads=True):
+        if regularize_grads:
             cross_entropy = self.base_loss(output, target)
             grads = torch.autograd.grad(cross_entropy, inputs, create_graph=True)[0]
             reg = self.hp * torch.sum(grads ** 2) + cross_entropy
