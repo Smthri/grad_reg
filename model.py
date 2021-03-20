@@ -39,8 +39,8 @@ class Net(nn.Module):
     def save(self, folder='./checkpoints/', name='model'):
         torch.save(self.state_dict(), os.path.join(folder, f'{name}.pth'))
         
-    def load(self, path='./checkpoints/model.pth'):
+    def load(self, path='./checkpoints/', name='model'):
         if os.path.exists(path):
-            self.load_state_dict(torch.load(path))
+            self.load_state_dict(torch.load(os.path.join(path, f'{name}.pth')))
         else:
             print(f'WARNING: path {path} does not exist!')
