@@ -8,7 +8,7 @@ from tqdm import tqdm
 from loss import GradRegLoss
 
 class Net(nn.Module):
-    def __init__(self, reg_param=0):
+    def __init__(self, reg_param=0, device=None):
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(1, 6, 5)
         self.bn1 = nn.BatchNorm2d(6)
@@ -19,7 +19,7 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(120, 10)
         self.act = nn.Softmax(dim=-1)
 
-        self.device = torch.device("cuda:2" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(device if device and torch.cuda.is_available() else "cpu")
         self.to(self.device)
 
         print('re_param:', reg_param)
